@@ -1,0 +1,21 @@
+#! /usr/bin/python3
+
+from telegram import Bot
+import sys
+import asyncio
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+
+TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
+
+message = sys.argv[1]
+
+async def send_message():
+    bot = Bot(token=TOKEN)
+    chat_id = CHAT_ID
+    await bot.send_message(chat_id=chat_id, text=message)
+
+asyncio.run(send_message())

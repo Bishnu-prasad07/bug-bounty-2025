@@ -1,0 +1,25 @@
+#! /usr/bin/python3
+
+from telegram import Bot
+import sys
+import asyncio
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+
+TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
+
+async def send_file(message):
+  bot = Bot(token=TOKEN)
+  chat_id = CHAT_ID
+  file_path = sys.argv[1]
+  await bot.send_document(chat_id=chat_id, document=open(file_path, 'rb'), caption=message)
+
+async def main():
+  message = 'Recon result of ' + sys.argv[2] + ' is ready!🚀'
+  await send_file(message)
+
+if __name__ == "__main__":
+    asyncio.run(main())

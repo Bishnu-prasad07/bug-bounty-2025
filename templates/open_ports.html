@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Open Ports Scanner</title>
+		<style>
+			table {
+				width: 100%;
+				border-collapse: collapse;
+			}
+
+			th,
+			td {
+				padding: 8px;
+				border: 1px solid #ddd;
+				text-align: left;
+			}
+
+			th {
+				background-color: #f2f2f2;
+			}
+
+			tr:nth-child(even) {
+				background-color: #f2f2f2;
+			}
+
+			tr:hover {
+				background-color: #ddd;
+			}
+		</style>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+			}
+
+			h1 {
+				text-align: center;
+			}
+
+			form {
+				text-align: center;
+				margin-top: 20px;
+			}
+
+			label {
+				font-weight: bold;
+			}
+
+			input[type='text'] {
+				padding: 5px;
+				margin: 5px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+			}
+
+			button[type='submit'] {
+				padding: 8px 20px;
+				margin: 10px;
+				background-color: #007bff;
+				color: #fff;
+				border: none;
+				border-radius: 3px;
+				cursor: pointer;
+			}
+
+			button[type='submit']:hover {
+				background-color: #0056b3;
+			}
+
+			#openPortsOutput {
+				margin-top: 20px;
+				padding: 10px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+				overflow-y: auto;
+				max-height: auto;
+			}
+
+			/* Styles for the home button */
+			.home-button {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				padding: 5px 10px;
+				background-color: #007bff;
+				color: #fff;
+				border: none;
+				border-radius: 3px;
+				text-decoration: none;
+			}
+
+			.home-button:hover {
+				background-color: #0056b3;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="/" class="home-button">Home</a>
+		<h1>Open Ports Scanner</h1>
+		<form id="openPortsForm">
+			<label for="domain">Enter Domain</label>
+			<input type="text" id="domain" name="domain" required />
+			<button type="submit">Scan Ports</button>
+		</form>
+		<div id="openPortsOutput"></div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+		<script>
+			var socket = io();
+
+			document.getElementById('openPortsForm').onsubmit = function (event) {
+				event.preventDefault();
+				var domain = document.getElementById('domain').value;
+				document.getElementById('openPortsOutput').innerHTML = '';
+				socket.emit('start_openports', { domain: domain });
+			};
+
+			socket.on('openports_update', function (data) {
+				var nmapOutput = data.data;
+
+				function extractPortInfo(nmapOutput) {
+					const startIndex = nmapOutput.indexOf('PORT');
+					const endIndex = nmapOutput.indexOf('Nmap done');
+					const trimmedOutput = nmapOutput.substring(startIndex, endIndex);
+
+					const portInfo = trimmedOutput
+						.split('\n')
+						.slice(1, -1)
+						.map((line) => {
+							const parts = line.trim().split(/\s+/);
+							return {
+								port: parts[0],
+								state: parts[1],
+								service: parts[2],
+							};
+						});
+
+					return portInfo;
+				}
+
+				const portInfo = extractPortInfo(nmapOutput);
+				console.log(portInfo);
+
+				var openPortsOutput = document.getElementById('openPortsOutput');
+
+				var table = document.createElement('table');
+				table.style.width = '100%';
+				table.style.borderCollapse = 'collapse';
+
+				var headerRow = document.createElement('tr');
+				var headers = ['Port', 'State', 'Service'];
+				headers.forEach(function (headerText) {
+					var header = document.createElement('th');
+					header.textContent = headerText;
+					headerRow.appendChild(header);
+				});
+				table.appendChild(headerRow);
+
+				portInfo.forEach(function (port) {
+					var row = document.createElement('tr');
+
+					var portCell = document.createElement('td');
+					portCell.textContent = port.port;
+					row.appendChild(portCell);
+
+					var stateCell = document.createElement('td');
+					stateCell.textContent = port.state;
+					row.appendChild(stateCell);
+
+					var serviceCell = document.createElement('td');
+					serviceCell.textContent = port.service;
+					row.appendChild(serviceCell);
+
+					table.appendChild(row);
+				});
+
+				openPortsOutput.appendChild(table);
+
+				openPortsOutput.scrollTop = openPortsOutput.scrollHeight;
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Bug Bounty Recon Tool</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+				background-color: #f2f2f2;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+			}
+
+			.container {
+				text-align: center;
+			}
+
+			h1 {
+				margin-top: 20px;
+			}
+
+			.card {
+				background-color: #fff;
+				border-radius: 10px;
+				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+				padding: 20px;
+				margin: 20px;
+				transition: transform 0.3s ease;
+				width: 250px;
+				display: inline-block;
+			}
+
+			.card:hover {
+				transform: translateY(-5px);
+			}
+
+			.card a {
+				text-decoration: none;
+				color: #007bff;
+				font-weight: bold;
+				transition: all 0.3s ease;
+			}
+
+			.card a:hover {
+				color: #0056b3;
+			}
+
+			footer {
+				margin-top: auto;
+				background-color: #333;
+				color: #fff;
+				padding: 20px 0;
+				text-align: center;
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Bug Bounty Automation</h1>
+			<div class="card">
+				<h2>Ping</h2>
+				<p>Check if a server is reachable.</p>
+				<a href="/ping">Go to Tool</a>
+			</div>
+			<div class="card">
+				<h2>Whois</h2>
+				<p>Retrieve domain registration information.</p>
+				<a href="/whois">Go to Tool</a>
+			</div>
+			<div class="card">
+				<h2>IP Lookup</h2>
+				<p>Get detailed information about an IP address.</p>
+				<a href="/ip_lookup">Go to Tool</a>
+			</div>
+			<div class="card">
+				<h2>Certificate Search</h2>
+				<p>Search for SSL/TLS certificates.</p>
+				<a href="/certificate_search">Go to Tool</a>
+			</div>
+			<div class="card">
+				<h2>Open Ports</h2>
+				<p>Scan for open ports on a server.</p>
+				<a href="/open_ports">Go to Tool</a>
+			</div>
+			<div class="card">
+				<h2>Recon</h2>
+				<p>Gather information for reconnaissance.</p>
+				<a href="/recon">Go to Tool</a>
+			</div>
+		</div>
+	</body>
+</html>

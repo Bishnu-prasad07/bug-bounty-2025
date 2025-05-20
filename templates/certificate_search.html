@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Certificate Search Tool</title>
+		<style>
+			table {
+				width: 100%;
+				border-collapse: collapse;
+			}
+
+			th,
+			td {
+				padding: 8px;
+				border: 1px solid #ddd;
+				text-align: left;
+			}
+
+			th {
+				background-color: #f2f2f2;
+			}
+
+			tr:nth-child(even) {
+				background-color: #f2f2f2;
+			}
+
+			tr:hover {
+				background-color: #ddd;
+			}
+		</style>
+
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+			}
+
+			h1 {
+				text-align: center;
+			}
+
+			form {
+				text-align: center;
+				margin-top: 20px;
+			}
+
+			label {
+				font-weight: bold;
+			}
+
+			input[type='text'] {
+				padding: 5px;
+				margin: 5px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+			}
+
+			button[type='submit'] {
+				padding: 8px 20px;
+				margin: 10px;
+				background-color: #007bff;
+				color: #fff;
+				border: none;
+				border-radius: 3px;
+				cursor: pointer;
+			}
+
+			button[type='submit']:hover {
+				background-color: #0056b3;
+			}
+
+			#crtshOutput {
+				margin-top: 20px;
+				padding: 10px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+				overflow-y: auto;
+				max-height: auto;
+			}
+
+			#outputText {
+				text-align: center;
+				font-weight: bold;
+			}
+
+			#resultText {
+				text-align: center;
+				margin-top: 10px;
+			}
+
+			.home-button {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				padding: 5px 10px;
+				background-color: #007bff;
+				color: #fff;
+				border: none;
+				border-radius: 3px;
+				text-decoration: none;
+			}
+
+			.home-button:hover {
+				background-color: #0056b3;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="/" class="home-button">Home</a>
+		<h1>Certificate Search Tool</h1>
+		<form id="crtshForm">
+			<label for="domain">Enter Domain</label>
+			<input type="text" id="domain" name="domain" required />
+			<button type="submit">Start Search</button>
+		</form>
+		<div id="crtshOutput"></div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+		<script>
+			var socket = io();
+
+			document.getElementById('crtshForm').onsubmit = function (event) {
+				event.preventDefault();
+				var domain = document.getElementById('domain').value;
+				document.getElementById('crtshOutput').innerHTML = '';
+				socket.emit('start_crtsh', { domain: domain });
+			};
+
+			socket.on('crtsh_update', function (data) {
+				var crtshOutput = document.getElementById('crtshOutput');
+				var jsonData = JSON.parse(data.data);
+				var tableHTML =
+					'<table border="1"><tr><th>Issuer CA ID</th><th>Issuer Name</th><th>Common Name</th><th>Name Value</th><th>ID</th><th>Entry Timestamp</th><th>Not Before</th><th>Not After</th><th>Serial Number</th><th>Result Count</th></tr>';
+				jsonData.forEach(function (entry) {
+					tableHTML += '<tr>';
+					tableHTML += '<td>' + entry.issuer_ca_id + '</td>';
+					tableHTML += '<td>' + entry.issuer_name + '</td>';
+					tableHTML += '<td>' + entry.common_name + '</td>';
+					tableHTML += '<td>' + entry.name_value + '</td>';
+					tableHTML += '<td>' + entry.id + '</td>';
+					tableHTML += '<td>' + entry.entry_timestamp + '</td>';
+					tableHTML += '<td>' + entry.not_before + '</td>';
+					tableHTML += '<td>' + entry.not_after + '</td>';
+					tableHTML += '<td>' + entry.serial_number + '</td>';
+					tableHTML += '<td>' + entry.result_count + '</td>';
+					tableHTML += '</tr>';
+				});
+				tableHTML += '</table>';
+				crtshOutput.innerHTML = tableHTML;
+			});
+		</script>
+	</body>
+</html>
